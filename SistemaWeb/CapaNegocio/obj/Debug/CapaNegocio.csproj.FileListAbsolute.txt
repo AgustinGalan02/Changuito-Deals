@@ -1,0 +1,11 @@
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaNegocio.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaNegocio.pdb
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaDatos.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaEntidad.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaDatos.pdb
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\CapaEntidad.pdb
+E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.csproj.AssemblyReference.cache
+E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.csproj.CoreCompileInputs.cache
+E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.csproj.CopyComplete
+E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.pdb

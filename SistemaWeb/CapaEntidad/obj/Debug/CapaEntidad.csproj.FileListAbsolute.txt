@@ -1,0 +1,6 @@
+E:\SistemaWeb\SistemaWeb\CapaEntidad\bin\Debug\CapaEntidad.dll
+E:\SistemaWeb\SistemaWeb\CapaEntidad\bin\Debug\CapaEntidad.pdb
+E:\SistemaWeb\SistemaWeb\CapaEntidad\obj\Debug\CapaEntidad.csproj.AssemblyReference.cache
+E:\SistemaWeb\SistemaWeb\CapaEntidad\obj\Debug\CapaEntidad.csproj.CoreCompileInputs.cache
+E:\SistemaWeb\SistemaWeb\CapaEntidad\obj\Debug\CapaEntidad.dll
+E:\SistemaWeb\SistemaWeb\CapaEntidad\obj\Debug\CapaEntidad.pdb
