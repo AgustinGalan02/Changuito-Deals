@@ -6,10 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
 using CapaEntidad;
 using CapaNegocio;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 namespace CapaAdmin.Controllers
 {
@@ -21,12 +21,23 @@ namespace CapaAdmin.Controllers
             return View();
         }
 
-        public ActionResult Usuarios()
+        public ActionResult Usuarios(string correo)
         {
-            return View();
-        }
+            correo = User.Identity.Name;
+            var usuario = new CN_Usuarios().Listar().FirstOrDefault(u => u.correo == correo);
 
-        [HttpGet] // es una URL para mostrar datos. GET MOSTRAR| POST GUARDAR | PUT EDITAR | DELETE BORRAR
+            if (usuario != null && usuario.roles == true)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+            
+
+            [HttpGet] // es una URL para mostrar datos. GET MOSTRAR| POST GUARDAR | PUT EDITAR | DELETE BORRAR
         public JsonResult ListarUsuarios()          // para devolver los datos de la lista
         {
             List<Usuario> oLista = new List<Usuario>();

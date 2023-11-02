@@ -102,9 +102,13 @@ correo varchar(100),
 contrasenia varchar (20),
 reestablecer bit default 1,
 activo bit default 1,
-fecha_registro datetime default getdate())
+fecha_registro datetime default getdate(),
+roles bit default 0)
 
 select * from usuarios
+
+
+select * from productos
 
 --agregar el procedimiento almacenado de registrar, editar y eliminar usuario
 
@@ -341,12 +345,14 @@ begin
 select 
 
 (select count(*) from clientes) [TotalCliente],
-(select isnull(sum(cantidad),0) from detalle_ventas) [TotalVenta],
+(select isnull(count(*),0) from detalle_ventas) [TotalVenta],
 (select count(*) from productos) [TotalProducto]
 
 end
 
 exec sp_ReporteDashboard
+
+drop procedure sp_ReporteDashboard
 
 --------------------------------------------------------------------------
 
@@ -360,7 +366,7 @@ begin
 
 set dateformat dmy;
 
-select CONVERT(char(10),v.fecha_registro,103)[FechaVenta], CONCAT(c.nombre,' ',c.apellido)[Cliente], p.nombre[Producto], p.precio[Precio], dv.cantidad[Cantidad], dv.precio_total[Total], v.id_transaccion[IdTransaccion] from detalle_ventas dv 
+select CONVERT(char(10),v.fecha_registro,103)[FechaVenta], CONCAT(c.nombre,' ',c.apellido)[Cliente], p.nombre[Producto], (dv.precio_total / dv.cantidad)[Precio], dv.cantidad[Cantidad], dv.precio_total[Total], v.id_transaccion[IdTransaccion] from detalle_ventas dv 
 inner join productos p on p.id_producto = dv.id_producto
 inner join ventas v on v.id_venta = dv.id_venta
 inner join clientes c on c.id_cliente = v.id_cliente
@@ -370,6 +376,10 @@ end
 
 exec sp_ReporteVentas
 
+-- (dv.precio_total / dv.cantidad)[Precio]
+--p.precio[Precio]
+
+drop procedure sp_ReporteVentas
 --------------------------------------------------------------------------
 
 create proc sp_RegistrarCliente(
@@ -552,3 +562,78 @@ inner join marca m on m.id_marca = p.id_marca
 where c.id_cliente = @idcliente)
 
 select * from fn_obtenerCarritoCliente(20)
+
+--------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from usuarios
+select * from clientes
+select * from productos
+select * from ventas
+select * from detalle_ventas
+update productos set stock = 500 where id_producto = 3
+
+
+-- ESTO SIRVE COMO UNA ESTRUCTURA DE DATOS TEMPORAL QUE SE PUEDE USAR EN CONSULTAS Y SP.
+-- VA A ALMACENAR LOS PRODUCTOS QUE EL CLIENTE ESTA ACTUALMENTE COMPRANDO
+create type [dbo].[EDetalle_Venta] AS TABLE(
+	[IdProducto] int null,
+	[Cantidad] int null,
+	[Total] decimal(18,2) null)
+
+
+
+create procedure sp_RegistrarVenta(
+@IdCliente int,
+@TotalProducto int,
+@PrecioTotal decimal(18,2),
+@Direccion varchar(100),
+@IdTransaccion varchar(50),
+@DetalleVenta [EDetalle_Venta] READONLY,        -- se usa como parametro, de esta forma se le puede enviar una lista de productos. Solo es de lectura                    
+@Resultado bit output,
+@Mensaje varchar(500) output)
+as 
+begin
+
+	begin try
+		declare @idventa int = 0
+		set @Resultado = 1
+		set @Mensaje = ''
+
+		begin transaction registro
+
+		insert into ventas(id_cliente, total_producto, precio_total, direccion, id_transaccion) 
+		values(@IdCliente, @TotalProducto, @PrecioTotal, @Direccion, @IdTransaccion)
+
+		set @idventa = SCOPE_IDENTITY()
+
+		insert into detalle_ventas(id_venta, id_producto, cantidad, precio_total)
+		select @idventa, IdProducto, Cantidad, Total from @DetalleVenta
+
+		delete from carrito_temporal where id_cliente = @IdCliente
+
+		commit transaction registro
+	end try
+	begin catch
+		set @Resultado = 0
+		set @Mensaje = ERROR_MESSAGE()
+		rollback transaction registro
+	end catch
+end
+
+
+

@@ -10,7 +10,6 @@ namespace CapaEntidad
     {
         public int id_detalle_venta { get; set; }
         public int cantidad { get; set; }
-        public decimal precio_producto { get; set; }
         public decimal precio_total { get; set; }
         public int id_venta { get; set; }
         public Producto oProducto { get; set; }

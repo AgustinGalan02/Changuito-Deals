@@ -15,5 +15,6 @@ namespace CapaEntidad
         public string contrasenia { get; set; }
         public bool reestablecer { get; set; }
         public bool activo { get; set; }
+        public bool roles { get; set; }
     }
 }

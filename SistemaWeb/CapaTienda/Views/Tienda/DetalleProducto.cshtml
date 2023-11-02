@@ -73,7 +73,22 @@
                             window.location.href = '@Url.Action("Carrito","Tienda")'
 
                         })*@
-                        swal.fire("", "Agregado al carrito", "success");
+                                                Swal.fire({
+                            title: '¡Agregado correctamente!',
+                            text: '¿Desea ir al carrito?',
+                            type: "success",
+                            showCancelButton: true,
+                            confirmButtonClass: "btn-primary",
+                            confirmButtonText: "Si",
+                            cancelButtonText: "No",
+                            closeOnConfirm: false
+                        }).then(function (result) {
+
+                            if (result.value) {
+                                window.location.href = '@Url.Action("Carrito","Tienda")'
+                            }
+
+                        })
                     } else {
                         swal.fire("", data.mensaje, "warning");
                     }

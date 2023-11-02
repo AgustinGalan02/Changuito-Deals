@@ -13,6 +13,7 @@ namespace CapaEntidad
         public int id_cliente { get; set; }
         public decimal precio_total { get; set; }
         public string id_transaccion { get; set; }
+        public string direccion { get; set; }
         public List<DetalleVentas> oDetalleVentas { get; set; }
 
     }

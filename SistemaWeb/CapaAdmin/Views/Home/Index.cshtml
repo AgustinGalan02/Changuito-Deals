@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <h6>Cantidad de Clientes</h6>
-                        <h6 id="totalcliente">0</h6>
+                        <h6 id="totalcliente"></h6>
                     </div>
                     <div class="col-sm-3">
                         <i class="fas fa-users fa-2x"></i>
@@ -34,7 +34,7 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <h6>Cantidad de Ventas</h6>
-                        <h6 id="totalventa">0</h6>
+                        <h6 id="totalventa"></h6>
                     </div>
                     <div class="col-sm-3">
                         <i class="fas fa-shopping-bag fa-2x"></i>
@@ -49,7 +49,7 @@
                 <div class="row">
                     <div class="col-sm-9">
                         <h6>Cantidad de Productos</h6>
-                        <h6 id="totalproducto">0</h6>
+                        <h6 id="totalproducto"></h6>
                     </div>
                     <div class="col-sm-3">
                         <i class="fas fa-boxes fa-2x"></i>
@@ -170,14 +170,37 @@
                         dataType: "json"
                     },
                     "columns": [
-                        {"data":"FechaVenta"},
-                        { "data": "Cliente"},
-                        { "data": "Producto"},
-                        { "data": "Precio"},
-                        { "data": "Cantidad"},
-                        { "data": "Total"},
+                        { "data": "FechaVenta" },
+                        { "data": "Cliente" },
+                        { "data": "Producto" },
+                        {
+                            "data": "Precio",
+                            "render": function (data, type, row) {
+                                if (type === 'display' || type === 'filter') {
+                                    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(data);
+                                }
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "Cantidad",
+                            "render": function (data, type, row) {
+                                if (type === 'display' || type === 'filter') {
+                                    return new Intl.NumberFormat('es-AR').format(data);
+                                }
+                                return data;
+                            }
+                        },
+                        {
+                            "data": "Total",
+                            "render": function (data, type, row) {
+                                if (type === 'display' || type === 'filter') {
+                                    return new Intl.NumberFormat('es-ar', { style: 'currency', currency: 'ARS' }).format(data);
+                                }
+                                return data;
+                            }
+                        },
                         { "data": "IdTransaccion" }
-
                     ],
                     language: {
                         url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json', // sirve para poner el DataTable en español

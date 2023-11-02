@@ -21,7 +21,7 @@ namespace CapaDatos
             {
                 using (SqlConnection oconexion = new SqlConnection(Conexion.cn)) {
 
-                    string query = "select id_usuario, nombre, apellido, correo, contrasenia, reestablecer, activo from usuarios"; // se realiza la query de SQL
+                    string query = "select id_usuario, nombre, apellido, correo, contrasenia, reestablecer, activo, roles from usuarios"; // se realiza la query de SQL
 
                     SqlCommand cmd = new SqlCommand(query, oconexion); // se establece la relacion con la BD
                     cmd.CommandType = CommandType.Text; // se especifica que tipo de dato es
@@ -39,7 +39,8 @@ namespace CapaDatos
                                     correo = dr["correo"].ToString(),
                                     contrasenia = dr["contrasenia"].ToString(),
                                     reestablecer = Convert.ToBoolean(dr["reestablecer"]),           // se convierte a booleano
-                                    activo = Convert.ToBoolean(dr["activo"])
+                                    activo = Convert.ToBoolean(dr["activo"]),
+                                    roles = Convert.ToBoolean(dr["roles"])
                                 }
                                 );
 

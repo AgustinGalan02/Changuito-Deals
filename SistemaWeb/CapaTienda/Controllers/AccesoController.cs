@@ -97,6 +97,7 @@ namespace CapaTienda.Controllers
                     ViewBag.Error = null;
 
                     return RedirectToAction("Index", "Tienda");
+
                 }
             }
         }

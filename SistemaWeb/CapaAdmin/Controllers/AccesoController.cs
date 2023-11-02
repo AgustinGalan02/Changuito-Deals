@@ -57,6 +57,7 @@ namespace CapaAdmin.Controllers
 
                 ViewBag.Error = null;
                 return RedirectToAction("Index", "Home");
+
             }
         }
 
