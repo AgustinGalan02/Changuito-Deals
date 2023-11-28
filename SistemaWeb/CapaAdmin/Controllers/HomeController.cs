@@ -105,7 +105,7 @@ namespace CapaAdmin.Controllers
 
             DataTable dt = new DataTable();
 
-            dt.Locale = new System.Globalization.CultureInfo("es-AR"); // configuracion regional
+            dt.Locale = new System.Globalization.CultureInfo("es-US"); // configuracion regional
             dt.Columns.Add("Fecha Venta", typeof(string));
             dt.Columns.Add("Cliente", typeof(string));
             dt.Columns.Add("Producto", typeof(string));

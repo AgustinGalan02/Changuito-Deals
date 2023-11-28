@@ -42,9 +42,9 @@ namespace CapaDatos
                                     FechaVenta = dr["FechaVenta"].ToString(),
                                     Cliente = dr["Cliente"].ToString(),             
                                     Producto = dr["Producto"].ToString(),
-                                    Precio = Convert.ToDecimal(dr["Precio"], new CultureInfo("es-AR")),
+                                    Precio = Convert.ToDecimal(dr["Precio"], new CultureInfo("es-US")),
                                     Cantidad = Convert.ToInt32(dr["Cantidad"].ToString()),
-                                    Total = Convert.ToDecimal(dr["Total"], new CultureInfo("es-AR")),
+                                    Total = Convert.ToDecimal(dr["Total"], new CultureInfo("es-US")),
                                     IdTransaccion = dr["IdTransaccion"].ToString()
                                 }
                                 );

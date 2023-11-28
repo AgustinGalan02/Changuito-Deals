@@ -177,7 +177,7 @@
                             "data": "Precio",
                             "render": function (data, type, row) {
                                 if (type === 'display' || type === 'filter') {
-                                    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(data);
+                                    return new Intl.NumberFormat('es-US', { style: 'currency', currency: 'USD' }).format(data);
                                 }
                                 return data;
                             }
@@ -186,7 +186,7 @@
                             "data": "Cantidad",
                             "render": function (data, type, row) {
                                 if (type === 'display' || type === 'filter') {
-                                    return new Intl.NumberFormat('es-AR').format(data);
+                                    return new Intl.NumberFormat('es-US').format(data);
                                 }
                                 return data;
                             }
@@ -195,7 +195,7 @@
                             "data": "Total",
                             "render": function (data, type, row) {
                                 if (type === 'display' || type === 'filter') {
-                                    return new Intl.NumberFormat('es-ar', { style: 'currency', currency: 'ARS' }).format(data);
+                                    return new Intl.NumberFormat('es-us', { style: 'currency', currency: 'USD' }).format(data);
                                 }
                                 return data;
                             }

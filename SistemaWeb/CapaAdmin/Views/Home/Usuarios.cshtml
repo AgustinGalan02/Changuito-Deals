@@ -213,7 +213,6 @@ $("#tabla tbody").on("click", '.btn-eliminar', function () {
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (data) {
-                    debugger;
                     if (data.resultado) {
                         tabladata.row(usuarioSeleccionado).remove().draw();
                     } else {

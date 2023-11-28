@@ -77,6 +77,7 @@ create table ventas(
 id_venta int primary key identity,
 id_cliente int foreign key references clientes(id_cliente),
 precio_total decimal(18,2),
+total_producto int,
 id_transaccion varchar(60),
 direccion varchar(100),
 fecha_registro datetime default getdate())
@@ -111,7 +112,66 @@ select * from usuarios
 select * from productos
 
 --agregar el procedimiento almacenado de registrar, editar y eliminar usuario
+create proc sp_RegistrarUsuario(
+@Nombre varchar(100),
+@Apellido varchar(100),
+@Correo varchar(100),
+@Contrasenia varchar(100),
+@Activo bit,
+@Mensaje varchar(500) output,
+@Resultado int output)
+as
+begin
+	set @Resultado = 0
+	if not exists (select * from usuarios where correo = @Correo)
+	begin
+		insert into usuarios(nombre,apellido,correo,contrasenia,activo) values
+							(@Nombre,@Apellido,@Correo,@Contrasenia,@Activo)
 
+		set @Resultado = SCOPE_IDENTITY()
+
+	end
+	else
+	 set @Mensaje = 'El correo del usuario ya existe'
+end
+go
+
+
+create proc sp_EditarUsuario(
+@IdUsuario int,
+@Nombre varchar(100),
+@Apellido varchar(100),
+@Correo varchar(100),
+@Contrasenia varchar(100),
+@Activo bit,
+@Mensaje varchar(500) output,
+@Resultado bit output)
+as
+begin
+	set @Resultado = 0
+	if not exists(select * from usuarios where correo = @Correo and id_usuario != @IdUsuario)
+	begin
+		update top(1) usuarios set
+		nombre = @Nombre,
+		apellido = @Apellido,
+		correo = @Correo,
+		activo = @Activo
+		where id_usuario = @IdUsuario
+
+		set @Resultado = 1
+	end
+	else
+	 set @Mensaje = 'El correo del usuario ya existe'
+end
+go
+
+
+
+create proc sp_RegistrarCategoria(
+@Descripcion varchar(100),
+@Activo bit,
+@Mensaje varchar(500) output,
+@Resultado int ou
 --------------------------------------------------------------------------
 
 /* PROCEDIMIENTOS ALMACENADOS*/
@@ -566,30 +626,9 @@ select * from fn_obtenerCarritoCliente(20)
 --------------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-select * from usuarios
-select * from clientes
-select * from productos
-select * from ventas
-select * from detalle_ventas
-update productos set stock = 500 where id_producto = 3
-
-
 -- ESTO SIRVE COMO UNA ESTRUCTURA DE DATOS TEMPORAL QUE SE PUEDE USAR EN CONSULTAS Y SP.
 -- VA A ALMACENAR LOS PRODUCTOS QUE EL CLIENTE ESTA ACTUALMENTE COMPRANDO
+-- ESTO TAMBIEN PERMITE USARLA COMO PARAMETRO EN UN PROC ALMACENADO.
 create type [dbo].[EDetalle_Venta] AS TABLE(
 	[IdProducto] int null,
 	[Cantidad] int null,
@@ -609,7 +648,7 @@ create procedure sp_RegistrarVenta(
 as 
 begin
 
-	begin try
+	begin try -- PARA CAPTURAR ERRORES
 		declare @idventa int = 0
 		set @Resultado = 1
 		set @Mensaje = ''
@@ -626,6 +665,8 @@ begin
 
 		delete from carrito_temporal where id_cliente = @IdCliente
 
+		update ventas set total_producto = (select sum(cantidad) from detalle_ventas where id_venta = @idventa) where id_venta = @idventa
+
 		commit transaction registro
 	end try
 	begin catch
@@ -635,5 +676,33 @@ begin
 	end catch
 end
 
+create function fn_ListarCompra(
+@idcliente int)
+returns table
+as 
+return (
+select productos.rutaImagen, productos.nombreImagen, productos.nombre, productos.precio, detalle_ventas.cantidad, detalle_ventas.precio_total, ventas.id_transaccion from detalle_ventas 
+inner join productos on productos.id_producto = detalle_ventas.id_producto
+inner join ventas on ventas.id_venta = detalle_ventas.id_venta
+where ventas.id_cliente = @idcliente)
+go
 
 
+
+select * from ventas where id_transaccion = '1XK67305M69146814'
+select * from ventas where id_transaccion = '1G5021575V649704D'
+
+select * from detalle_ventas
+
+select * from clientes
+
+select * from productos
+
+select * from usuarios
+
+select * from usuarios
+select * from clientes
+select * from productos
+select * from ventas
+select * from detalle_ventas
+update productos set stock = 500 where id_producto = 3

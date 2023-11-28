@@ -163,7 +163,7 @@ namespace CapaDatos
                 {
 
                     StringBuilder sb = new StringBuilder();
-
+                    // BUSCA LAS MARCAS DE ACUERDO A LA CATEGORIA ESPECIFICADA. SI NO SE ESPECIFICA UNA CATEGORIA EL VALOR DEFECTO ES 0 (TODOS)
                     sb.AppendLine("select distinct m.id_marca, m.nombre_marca from productos p");
                     sb.AppendLine("inner join categorias c on c.id_categoria = p.id_categoria");
                     sb.AppendLine("inner join marca m on m.id_marca = p.id_marca and m.activo = 1");

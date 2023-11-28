@@ -4,12 +4,16 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
-
 using CapaEntidad;
 using CapaNegocio;
 using Newtonsoft.Json.Linq;
 using System.Web.Services.Description;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Data;
+using CapaEntidad.Paypal;
+using System.Globalization;
+using CapaTienda.Filter;
 
 namespace CapaTienda.Controllers
 {
@@ -21,6 +25,8 @@ namespace CapaTienda.Controllers
             return View();
         }
 
+        [ValidarSession]
+        [Authorize]
         public ActionResult Carrito()
         {
             return View();
@@ -192,6 +198,155 @@ namespace CapaTienda.Controllers
             respuesta = new CN_Carrito().EliminarCarrito(idcliente, idproducto);
 
             return Json(new { respuesta = respuesta, mensaje = mensaje }, JsonRequestBehavior.AllowGet);
+
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ProcesarPago(List<CarritoTemporal> oListaCarrito, Ventas oVenta)
+        {
+            decimal total = 0;
+
+            DataTable detalle_venta = new DataTable();
+            detalle_venta.Columns.Add("IdProducto", typeof(string));
+            detalle_venta.Columns.Add("Cantidad", typeof(int));
+            detalle_venta.Columns.Add("Total", typeof(decimal));
+
+
+            //PAYPAL
+            List<Item> oListaItem = new List<Item>();
+
+
+            foreach (CarritoTemporal oCarrito in oListaCarrito)
+            {
+                decimal subtotal = Convert.ToDecimal(oCarrito.cantidad.ToString()) * oCarrito.oProducto.precio;
+
+                total += subtotal;
+
+                oListaItem.Add(new Item() {
+                    name = oCarrito.oProducto.nombre,
+                    quantity = oCarrito.cantidad.ToString(),
+                    unit_amount = new UnitAmount()
+                    {
+                        currency_code = "USD",
+                        value = oCarrito.oProducto.precio.ToString("G", new CultureInfo("es-US"))
+                    }
+                });
+
+                detalle_venta.Rows.Add(new object[]
+                {
+                    oCarrito.oProducto.id_producto,
+                    oCarrito.cantidad,
+                    subtotal
+                });
+            }
+
+            PurchaseUnit purchaseUnit = new PurchaseUnit()
+            {
+                amount = new Amount()
+                {
+                    currency_code = "USD",
+                    value = total.ToString("G", new CultureInfo("es-US")),
+                    breakdown = new Breakdown()
+                    {
+                        item_total = new ItemTotal()
+                        {
+                            currency_code = "USD",
+                            value = total.ToString("G", new CultureInfo("es-US"))
+                        }
+                    }
+                },
+                description = "Compra de Changuito-Deals",
+                items = oListaItem
+            };
+
+            Checkout_Order oCheckOutOrder = new Checkout_Order()
+            {
+                intent = "CAPTURE",
+                purchase_units = new List<PurchaseUnit>() { purchaseUnit },
+                application_context = new ApplicationContext()
+                {
+                    brand_name = "ChanguitoDeals.com",
+                    landing_page = "NO_PREFERENCE",
+                    user_action = "PAY_NOW",
+                    return_url = "https://localhost:44392/Tienda/PagoEfectuado",
+                    cancel_url = "https://localhost:44392/Tienda/Carrito"
+                }
+
+            };
+
+            oVenta.precio_total = total;
+            oVenta.id_cliente = ((Cliente)Session["Cliente"]).id_cliente;
+
+            TempData["Venta"] = oVenta;
+            TempData["DetalleVenta"] = detalle_venta;
+
+
+            CN_Paypal opaypal = new CN_Paypal();
+
+            Response_Paypal<Response_Checkout> response_paypal = new Response_Paypal<Response_Checkout>();
+            response_paypal = await opaypal.CrearSolicitud(oCheckOutOrder); //RESPUESTA DE LA EJECUCION DE CREAR LA SOLICITUD
+
+
+            return Json(response_paypal, JsonRequestBehavior.AllowGet);
+        }
+
+        [ValidarSession]
+        [Authorize]
+        public async Task<ActionResult> PagoEfectuado()
+        {
+            string token = Request.QueryString["token"];
+
+            CN_Paypal opaypal = new CN_Paypal();
+            Response_Paypal<Response_Capture> response_paypal = new Response_Paypal<Response_Capture>();
+            response_paypal = await opaypal.AprobarPago(token);
+
+            ViewData["Status"] = response_paypal.Status;
+
+            if (response_paypal.Status)
+            {
+                Ventas oVenta = (Ventas)TempData["Venta"]; // se convierte la info del TempData en un objeto de ventas
+
+                DataTable detalle_venta = (DataTable)TempData["DetalleVenta"];
+
+                oVenta.id_transaccion = response_paypal.Response.purchase_units[0].payments.captures[0].id; // se usa el id transaccion de paypal
+
+
+                string mensaje = string.Empty;
+                bool respuesta = new CN_Venta().Registrar(oVenta, detalle_venta, out mensaje);
+
+                ViewData["IdTransaccion"] = oVenta.id_transaccion;
+            }
+
+            return View();
+        }
+
+
+
+        [ValidarSession]
+        [Authorize]
+        public ActionResult MisCompras()
+        {
+            int idcliente = ((Cliente)Session["Cliente"]).id_cliente;
+            List<DetalleVentas> oLista = new List<DetalleVentas>();
+
+            bool conversion;
+
+            oLista = new CN_Venta().ListarCompras(idcliente).Select(oc => new DetalleVentas()
+            {
+                oProducto = new Producto() // crea un nuevo objeto producto
+                {
+                    nombre = oc.oProducto.nombre,
+                    precio = oc.oProducto.precio,
+                    Base64 = CN_Recursos.ConvertirBase64(Path.Combine(oc.oProducto.rutaImagen, oc.oProducto.nombreImagen), out conversion), // unir ruta y nombre imagen
+                    Extension = Path.GetExtension(oc.oProducto.nombreImagen)
+                },
+                cantidad = oc.cantidad,
+                precio_total = oc.precio_total,
+                id_transaccion = oc.id_transaccion
+            }).ToList();
+
+            return View(oLista);
 
 
         }

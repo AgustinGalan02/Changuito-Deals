@@ -144,13 +144,13 @@ namespace CapaAdmin.Controllers
 
             decimal precio;
 
-            if (decimal.TryParse(oProducto.PrecioTexto, NumberStyles.AllowDecimalPoint, new CultureInfo("es-AR"), out precio))
+            if (decimal.TryParse(oProducto.PrecioTexto, NumberStyles.AllowDecimalPoint, new CultureInfo("es-US"), out precio))
             {
                 oProducto.precio = precio;
             }
             else
             {
-                return Json(new { operacionExitosa = false, mensaje = "El formato correcto del precio es ###.###,##" }, JsonRequestBehavior.AllowGet);
+                return Json(new { operacionExitosa = false, mensaje = "El formato correcto del precio es ###.###" }, JsonRequestBehavior.AllowGet);
             }
 
             if (oProducto.id_producto == 0)

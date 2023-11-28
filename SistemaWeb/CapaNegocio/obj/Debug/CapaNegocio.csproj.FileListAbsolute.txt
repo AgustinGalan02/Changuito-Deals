@@ -9,3 +9,7 @@ E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.csproj.CoreCompileInp
 E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.csproj.CopyComplete
 E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.dll
 E:\SistemaWeb\SistemaWeb\CapaNegocio\obj\Debug\CapaNegocio.pdb
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\Newtonsoft.Json.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\System.Configuration.ConfigurationManager.dll
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\Newtonsoft.Json.xml
+E:\SistemaWeb\SistemaWeb\CapaNegocio\bin\Debug\System.Configuration.ConfigurationManager.xml

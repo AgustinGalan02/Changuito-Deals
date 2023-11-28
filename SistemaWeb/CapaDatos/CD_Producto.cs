@@ -46,7 +46,7 @@ namespace CapaDatos
                                 descripcion = dr["descripcion"].ToString(),
                                 oMarca = new Marca() { id_marca = Convert.ToInt32(dr["id_marca"]), nombre_marca = dr["DesMarca"].ToString() },
                                 oCategoria = new Categoria() { id_categoria = Convert.ToInt32(dr["id_categoria"]), nombre_categoria = dr["DesCategoria"].ToString() },
-                                precio = Convert.ToDecimal(dr["precio"], new CultureInfo("es-AR")),
+                                precio = Convert.ToDecimal(dr["precio"], new CultureInfo("es-US")),
                                 stock = Convert.ToInt32(dr["stock"]),
                                 rutaImagen = dr["rutaImagen"].ToString(),
                                 nombreImagen = dr["nombreImagen"].ToString(),

@@ -190,7 +190,7 @@
                     "data": "precio",
                     "render": function (data, type, row) {
                         if (type === 'display' || type === 'filter') {
-                            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(data);
+                            return new Intl.NumberFormat('es-US', { style: 'currency', currency: 'USD' }).format(data);
                         }
                         return data;
                     }

@@ -33,9 +33,6 @@
                                         <div class="card-body">
                                             <div class="row">
 
-                                                <div class="col-sm-2 align-self-center d-flex justify-content-center">
-                                                    <img class="rounded" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" style="width:100px;height:100px" />
-                                                </div>
 
                                                 <div class="col-sm-4 align-self-center">
                                                     <span class="font-wight-bold d-block">Marca</span>
@@ -77,23 +74,22 @@
                                 </div>
 
                             </div>
-                            </div>
+                        </div>
 
-                            <div class="col-sm-3">
-                                <div class="card h-100">
-                                    <div class="card-body bg-light d-flex flex-column" style="height: 400px;">
-                                        <h5 class="card-title mb-4">Detalle del Envio</h5>
-                                        <form id="myForm">
-                                            <div class="mb-2">
-                                                <label for="exampleInputEmail1" class="form-label">Dirección de entrega:</label>
-                                                <input type="text" class="form-control form-control-sm" id="txtdireccion" autocomplete="off">
-                                            </div>
-                                        </form>
-                                        <div class="d-grid mt-auto">
-                                            <button class="btn btn-success" type="submit" form="myForm" onclick="RealizarPago()">
-                                                <i class="fab fa-paypal"></i> Terminar y Procesar Pago
-                                            </button>
+                        <div class="col-sm-3">
+                            <div class="card h-100">
+                                <div class="card-body bg-light d-flex flex-column" style="height: 400px;">
+                                    <h5 class="card-title mb-4">Detalle del Envio</h5>
+                                    <form id="myForm">
+                                        <div class="mb-2">
+                                            <label for="exampleInputEmail1" class="form-label">Dirección de entrega:</label>
+                                            <input type="text" class="form-control form-control-sm" id="txtdireccion" autocomplete="off">
                                         </div>
+                                    </form>
+                                    <div class="d-grid mt-auto">
+                                        <button class="btn btn-success" type="submit" form="myForm" onclick="RealizarPago()">
+                                            <i class="fab fa-paypal"></i> Terminar y Procesar Pago
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -102,14 +98,25 @@
                 </div>
             </div>
         </div>
-        </div>
+    </div>
+</div>
+}
+@section scripts{
 
-        @section scripts{
-
-                <script>
+    <script>
 
             $(document).ready(function () {
 
+                $("#myForm").submit(function (event) {
+                    var direccion = $("#txtdireccion").val();
+
+                    // Verifica si el campo de dirección está vacío
+                    if (!direccion.trim()) {
+                        event.preventDefault(); // Evita el envío del formulario
+                        swal.fire("", "Por favor, ingresa una dirección de envío", "warning");
+                    }
+                });
+                
                 jQuery.ajax({
                     url: '@Url.Action("ListarProductosCarrito", "Tienda")',
                     type: "POST",
@@ -120,9 +127,13 @@
                         $("#productos-carrito").html(""); // limpia los elementos que contenga para que no arroje ningun error
                         $("#productos-carrito").LoadingOverlay("hide");
 
+                        if (response.data.length === 0) {
+                            swal.fire("", "Actualmente no hay ningún producto agregado", "warning");
+                        } else { 
+
                         $.each(response.data, function (i, item) {
 
-                            var precioFormateado = item.oProducto.precio.toLocaleString('es-AR', { minimumFractionDigits: 0 });
+                            var precioFormateado = item.oProducto.precio.toLocaleString('es-US', { minimumFractionDigits: 0 });
 
 
                             $("<div>").addClass("card mb-2 card-producto").append(
@@ -170,6 +181,7 @@
                             ).appendTo("#productos-carrito") // se crean varias tarjetas dentro del div productos-carrito
                         })
                         sumarTotal();
+                        }
                     },
                     error: function (error) {
                         $("#productos-carrito").LoadingOverlay("hide");
@@ -192,7 +204,7 @@
                     sumaTotal += subtotal;
                 });
 
-                var sumaTotalFormateado = sumaTotal.toLocaleString('es-AR', { minimumFractionDigits: 0 });
+                var sumaTotalFormateado = sumaTotal.toLocaleString('es-US', { minimumFractionDigits: 0 });
 
                 $("#total").text(sumaTotalFormateado)
                 $("#total").data("sumatotal", sumaTotal)
@@ -290,7 +302,7 @@
                 })
 
 
-                // ELIMINAR 
+                // ELIMINAR
                 $(document).on("click", ".btn-eliminar", function () { // funcion para sumar un producto
 
                     var idproducto = $(this).data("idproducto");
@@ -320,13 +332,61 @@
 
                             }
                         })
-                    
+
                 })
 
+        function RealizarPago() {
 
+            var totalProductos = 0; // Variable para almacenar la suma total de productos
 
+            $("input.input-cantidad").each(function (i) {
+                var cantidad = parseFloat($(this).val());
+                totalProductos += cantidad; // Suma de las cantidades de cada producto
+            });
 
-                </script>
+            var venta = {
+                TotalProducto: totalProductos, // Se asigna la suma total al campo TotalProducto
+                PrecioTotal: 0,
+                Direccion: $("#txtdireccion").val()
+            };
 
+            var lista_carrito = [];
 
+            $("input.input-cantidad").each(function (i) {
+                var producto = $(this).data("oProducto");
+                var cantidad = parseFloat($(this).val());
+
+                lista_carrito.push({
+                    oProducto: producto,
+                    Cantidad: cantidad
+                });
+            });
+
+            jQuery.ajax({
+                url: '@Url.Action("ProcesarPago","Tienda")',
+                type: "POST",
+                data: JSON.stringify({ oListaCarrito: lista_carrito, oVenta: venta }),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    $.LoadingOverlay("hide");
+
+                    if (data.Status) {
+
+                        var jsonresult = data.Response;
+                        var links = jsonresult.links;
+                        var resultado = links.find(item => item.rel === "approve");
+                        window.location.href = resultado.href
+
+                    }
+                },
+                beforeSend: function () { $.LoadingOverlay("show") },
+                error: function (error) { $.LoadingOverlay("hide") }
+            })
         }
+
+
+    </script>
+
+
+}

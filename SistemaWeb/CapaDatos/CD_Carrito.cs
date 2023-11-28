@@ -132,7 +132,7 @@ namespace CapaDatos
                                 {
                                     id_producto = Convert.ToInt32(dr["id_producto"]),
                                     nombre = dr["nombre"].ToString(),
-                                    precio = Convert.ToDecimal(dr["precio"], new CultureInfo("es-AR")),
+                                    precio = Convert.ToDecimal(dr["precio"], new CultureInfo("es-US")),
                                     rutaImagen = dr["rutaImagen"].ToString(),
                                     nombreImagen = dr["nombreImagen"].ToString(),
                                     oMarca = new Marca() { nombre_marca = dr["DesMarca"].ToString() }

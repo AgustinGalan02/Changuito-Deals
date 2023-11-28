@@ -42,13 +42,18 @@ namespace CapaAdmin.Controllers
                 ViewBag.Error = "Correo o contraseña incorrectos";
                 return View();
             }
+            else if (oUsuario.activo == false)
+            {
+                ViewBag.Error = "Tu cuenta está desactivada. Contacta al administrador para más información.";
+                return View();
+            }
             else
             {
 
                 if (oUsuario.reestablecer) // el usuario debe reestablecer la contraseña
                 {
 
-                    TempData["IdUsuario"] = oUsuario.id_usuario;
+                    TempData["IdUsuario"] = oUsuario.id_usuario; // SIRVE PARA PASAR DATOS ENTRE ACCIONES/CONTROLADORES, TIENE VIDA UTIL LIMITADA A LA SOLICITUD ACTUAL Y A LA SIGUIENTE
 
                     return RedirectToAction("CambiarClave");
                 }
@@ -71,7 +76,7 @@ namespace CapaAdmin.Controllers
             if (oUsuario.contrasenia != CN_Recursos.ConvertirSha256(claveactual)) // si la contraseña es incorrecta
             {
                 TempData["IdUsuario"] = idusuario;
-                ViewData["vclave"] = "";
+                ViewData["vclave"] = ""; // se utiliza para pasar datos entre un controlador y una vista
                 ViewBag.Error = "La contraseña actual es incorrecta";
                 return View();
 
@@ -80,7 +85,7 @@ namespace CapaAdmin.Controllers
             else if (nuevaclave != confirmarclave)
             {
                 TempData["IdUsuario"] = idusuario;
-                ViewData["vclave"] = claveactual;
+                ViewData["vclave"] = claveactual; // se almacena la contraseña en caso de que la nueva contraseña se haya puesto mal
                 ViewBag.Error = "Las contraseñas no coinciden";
                 return View();
 

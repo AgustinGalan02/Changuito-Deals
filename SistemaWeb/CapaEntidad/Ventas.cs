@@ -14,6 +14,7 @@ namespace CapaEntidad
         public decimal precio_total { get; set; }
         public string id_transaccion { get; set; }
         public string direccion { get; set; }
+        public int total_producto { get; set; }
         public List<DetalleVentas> oDetalleVentas { get; set; }
 
     }

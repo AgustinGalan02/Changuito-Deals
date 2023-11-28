@@ -188,7 +188,7 @@ namespace CapaDatos
                     cmd.Parameters.AddWithValue("@clave", clave);
                     cmd.CommandType = CommandType.Text;
                     oconexion.Open();
-                    resultado = cmd.ExecuteNonQuery() > 0 ? true : false; // si la cantidad de filas afectadas es mayor a 0 salio todo bien, sino hubo un error al eliminar el usuario
+                    resultado = cmd.ExecuteNonQuery() > 0 ? true : false;
                 }
             }
             catch (Exception ex)
