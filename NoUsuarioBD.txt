@@ -1,0 +1,1 @@
+		<add name="cadena" providerName="System.Data.SqlClient" connectionString="Data Source=AGUSG;Initial Catalog=bd_ecommerce;Integrated Security=True;" />
