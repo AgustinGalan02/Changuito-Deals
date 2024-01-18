@@ -1,11 +1,1 @@
-Client ID:
-AYG9EwAHdEpQ3Q_LPqyv9rd0GQxaYgB3YRwpSSuyr3d1_SambmvMn_vC8by98usSfE8pKUguPaWoJV3Y
-
-Secret:
-ED2PWN9WwYazgEu84LhRojspvQJ7VPw-euc3Nu4tXZ3kLm1y43UxMUN-JKR_TwVhg_Tyt942MVf3Yy1t
-
-Cuenta Paypal Changuito-Deals:
-sb-ovq2928411544@business.example.com:5<is5Xd}
-
-Cuenta Paypal Clientes:
-sb-c847vr28408300@personal.example.com:guT84),;
+-
