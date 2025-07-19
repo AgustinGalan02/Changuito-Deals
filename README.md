@@ -40,7 +40,7 @@ Plataforma de comercio electrónico completa desarrollada con ASP.NET que ofrece
 
 - [@AgustinGalan02](https://www.github.com/AgustinGalan02)
 
-## Badges
+##
 
 [![Visual Studio](https://img.shields.io/badge/Visual%20Studio-5C2D91?style=flat&logo=visual-studio&logoColor=white)](https://visualstudio.microsoft.com/)
 
